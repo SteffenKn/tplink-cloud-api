@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/adumont/tplink-cloud-api.svg?branch=master)](https://travis-ci.org/adumont/tplink-cloud-api)
-[![codebeat badge](https://codebeat.co/badges/14afe7d2-3666-4d35-8fd6-c2e1b027e386)](https://codebeat.co/projects/github-com-adumont-tplink-cloud-api-master)
+[tplink-cloud-api](https://github.com/adumont/tplink-cloud-api) using cross-fetch instead of axios.
 
 # Introduction
 
@@ -75,7 +74,7 @@ await tplink.getHS110("My Smart Plug").getPowerUsage();
 
 ### Smart Switches (HS200, HS300...)
 
-You can  toggle smart switches with the same API as the smart plugs.
+You can toggle smart switches with the same API as the smart plugs.
 
 For an example of how to control a multiplug power outlet like the HS300 series, see examples of code in [Issue 27](https://github.com/adumont/tplink-cloud-api/issues/27#issuecomment-642304749). (Support for multiplug outlet was added after v0.8 of the npm module).
 
@@ -99,6 +98,7 @@ await tplink.getLB120("Lamp LB120").setState(1, 90, 2700);
 ```
 
 The three parameters for LB120 or KL120 are:
+
 - on_off: 1 on, 0 off
 - brightness: 0-100
 - color_temp:

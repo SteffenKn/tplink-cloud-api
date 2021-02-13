@@ -20,9 +20,10 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 tplink-cloud-api. If not, see http://www.gnu.org/licenses/. */
 
-import axios from "axios";
+import fetch from "cross-fetch";
+
 import tplink from "./tplink";
-import { checkError } from "./api-utils";
+import {checkError} from "./api-utils";
 
 export interface TPLinkDeviceInfo {
   fwVer: string;
@@ -118,33 +119,42 @@ export default class TPLinkDevice {
     return this.passthroughRequest(command);
   }
   async passthroughRequest(command) {
-    const request = {
-      method: "POST",
-      url: this.device.appServerUrl,
-      params: this.params,
+    const url = `https://kasa-devices.shisha-control.com/?${this.encodeQueryData(this.params)}`
+
+    const response = await fetch(url, {
+      method: 'POST',
       headers: {
         "cache-control": "no-cache",
         "User-Agent":
           "Dalvik/2.1.0 (Linux; U; Android 6.0.1; A0001 Build/M4B30X)",
         "Content-Type": "application/json"
       },
-      data: {
+      body: JSON.stringify({
         method: "passthrough",
         params: {
           deviceId: this.device.deviceId,
           requestData: JSON.stringify(command)
         }
-      }
-    };
+      }),
+    });
 
-    const response = await axios(request);
-    checkError(response);
+    const responseData = await response.json();
+
+    checkError(response, responseData);
 
     // eg: {"error_code":0,"result":{"responseData":"{\"smartlife.iot.smartbulb.lightingservice\":{\"get_light_state\":{\"on_off\":0,\"dft_on_state\":{\"mode\":\"normal\",\"hue\":0,\"saturation\":0,\"color_temp\":2700,\"brightness\":10},\"err_code\":0}}}"}}
-    return response.data &&
-      response.data.result &&
-      response.data.result.responseData
-      ? JSON.parse(response.data.result.responseData)
-      : response.data;
+    return responseData &&
+      responseData.result &&
+      responseData.result.responseData
+      ? JSON.parse(responseData.result.responseData)
+      : responseData;
   }
+
+  encodeQueryData(data) {
+    const ret = [];
+    for (const d in data) {
+      ret.push(`${encodeURIComponent(d)}=${encodeURIComponent(data[d])}`);
+    }
+    return ret.join('&');
+ }
 }

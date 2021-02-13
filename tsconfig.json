@@ -4,12 +4,11 @@
     "target": "es5",
     "lib": ["es2018"],
     "types": ["node"],
-    "outDir": "distribution",
+    "outDir": "dist",
     "declaration": true,
-    "declarationDir": "distribution",
+    "declarationDir": "dist",
     "esModuleInterop": true,
     "sourceMap": true
   },
-  "include": ["lib/**/*"],
-  "exclude": ["lib/**/*.spec.ts"]
+  "include": ["src/**/*"],
 }
