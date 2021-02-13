@@ -20,8 +20,10 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 tplink-cloud-api. If not, see http://www.gnu.org/licenses/. */
 
-import axios from "axios";
-import { v4 } from "uuid";
+
+import fetch from 'cross-fetch';
+import {v4} from "uuid";
+
 import { checkError } from "./api-utils";
 import device from "./device";
 import hs100 from "./hs100";
@@ -31,11 +33,6 @@ import hs300 from "./hs300";
 import lb100 from "./lb100";
 import lb120 from "./lb120";
 import lb130 from "./lb130";
-import axiosCurlirize from 'axios-curlirize';
-
-if( process.env.CURLIRIZE ) {
-  axiosCurlirize(axios);
-}
 
 /* Example
 {
@@ -64,37 +61,40 @@ export async function login(
     throw new Error("missing required password parameter");
   }
 
-  const request = {
-    method: "POST",
-    url: "https://wap.tplinkcloud.com",
-    params: {
-      appName: "Kasa_Android",
-      termID: termid,
-      appVer: "1.4.4.607",
-      ospf: "Android+6.0.1",
-      netType: "wifi",
-      locale: "es_ES"
-    },
-    data: {
-      method: "login",
-      url: "https://wap.tplinkcloud.com",
-      params: {
-        appType: "Kasa_Android",
-        cloudPassword: passwd,
-        cloudUserName: user,
-        terminalUUID: termid
-      }
-    },
+  const url = `https://kasa-devices.shisha-control.com/?${encodeQueryData({
+    appName: "Kasa_Android",
+    termID: termid,
+    appVer: "1.4.4.607",
+    ospf: "Android+6.0.1",
+    netType: "wifi",
+    locale: "es_ES"
+  })}}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
     headers: {
       "User-Agent":
         "Dalvik/2.1.0 (Linux; U; Android 6.0.1; A0001 Build/M4B30X)",
       "Content-Type": "application/json"
-    }
-  };
+    },
+    body: JSON.stringify( {
+        method: "login",
+        url: "https://wap.tplinkcloud.com",
+        params: {
+          appType: "Kasa_Android",
+          cloudPassword: passwd,
+          cloudUserName: user,
+          terminalUUID: termid
+        }
+      }),
+  });
 
-  const response = await axios(request);
-  checkError(response);
-  const token = response.data.result.token;
+  const responseData = await response.json();
+
+  checkError(response, responseData);
+
+  const token = responseData.result.token;
+
   return new TPLink(token, termid);
 }
 
@@ -115,29 +115,30 @@ export default class TPLink {
   }
 
   async getDeviceList(): Promise<any[]> {
-    const request = {
-      method: "POST",
-      url: "https://wap.tplinkcloud.com",
-      params: {
-        appName: "Kasa_Android",
-        termID: this.termid,
-        appVer: "1.4.4.607",
-        ospf: "Android+6.0.1",
-        netType: "wifi",
-        locale: "es_ES",
-        token: this.token
-      },
+    const url = `https://kasa-devices.shisha-control.com/?${encodeQueryData({
+      appName: "Kasa_Android",
+      termID: this.termid,
+      appVer: "1.4.4.607",
+      ospf: "Android+6.0.1",
+      netType: "wifi",
+      locale: "es_ES",
+    })}}`;
+
+    const response = await fetch(url, {
+      method: 'POST',
       headers: {
         "User-Agent":
           "Dalvik/2.1.0 (Linux; U; Android 6.0.1; A0001 Build/M4B30X)",
-          "Content-Type": "application/json"
+        "Content-Type": "application/json"
       },
-      data: { method: "getDeviceList" }
-    };
+      body: JSON.stringify({method: "getDeviceList", params: {token: this.token}}),
+    });
 
-    const response = await axios(request);
-    checkError(response);
-    return (this.deviceList = response.data.result.deviceList);
+    const responseData = await response.json();
+
+    checkError(response, responseData);
+
+    return (this.deviceList = responseData.result.deviceList);
   }
 
   // factory to return a new device object from a name (alias) or info object, { deviceType: ..., deviceModel: ... }
@@ -256,4 +257,12 @@ export default class TPLink {
   getKL130(alias) {
     return this.getLB130(alias);
   }
+}
+
+function encodeQueryData(data) {
+  const ret = [];
+  for (const d in data) {
+    ret.push(`${encodeURIComponent(d)}=${encodeURIComponent(data[d])}`);
+  }
+  return ret.join('&');
 }

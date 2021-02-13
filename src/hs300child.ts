@@ -21,7 +21,6 @@ You should have received a copy of the GNU General Public License along with
 tplink-cloud-api. If not, see http://www.gnu.org/licenses/. */
 
 import device from "./device";
-import HS300 from "./hs300";
 
 export default class HS300child extends device {
   private child;

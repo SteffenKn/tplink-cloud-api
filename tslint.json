@@ -3,7 +3,8 @@
   "extends": ["tslint-config-airbnb", "tslint-config-prettier"],
   "jsRules": {},
   "rules": {
-    "no-unused-expression-chai": true
+    "no-unused-expression-chai": true,
+    "import-name": false
   },
   "rulesDirectory": ["tslint-no-unused-expression-chai"]
 }

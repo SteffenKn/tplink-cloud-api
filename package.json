@@ -1,26 +1,20 @@
 {
-  "name": "tplink-cloud-api",
+  "name": "tplink-cloud-api_cross-fetch",
   "description": "Remotely control TP-Link smartplugs (HS100, HS110, HS300) and smartbulbs (LB100, LB110, LB120, LB130) using their cloud web service (no need to be on the same wifi/lan)",
   "author": "Alexandre Dumont <adumont@gmail.com>",
-  "homepage": "http://itnerd.space",
   "license": "GPL-3.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/adumont/tplink-cloud-api.git"
+    "url": "https://github.com/SteffenKn/tplink-cloud-api"
   },
   "bugs": {
-    "url": "https://github.com/adumont/tplink-cloud-api/issues"
+    "url": "https://github.com/SteffenKn/tplink-cloud-api/issues"
   },
-  "version": "0.8.1",
-  "main": "./distribution/tplink.js",
-  "files": [
-    "/distribution/**/*"
-  ],
-  "types": "distribution/index.d.ts",
+  "version": "0.0.1",
+  "main": "./dist/tplink.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "tslint --project tsconfig.json -c tslint.json lib/**/*.ts",
-    "prepublish": "yarn build",
     "test": "mocha -r ts-node/register -p tsconfig.json lib/**/*.spec.ts",
     "version": "git push; git push --tags"
   },
@@ -48,8 +42,8 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "axios": "^0.18.1",
-    "axios-curlirize": "^1.3.7",
+    "cors-anywhere": "^0.4.3",
+    "cross-fetch": "^3.0.6",
     "uuid": "^3.4.0"
   },
   "devDependencies": {
@@ -57,7 +51,6 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.17.42",
     "@types/uuid": "^3.4.9",
-    "axios-mock-adapter": "^1.18.2",
     "chai": "^4.1.2",
     "minimist": "^1.2.3",
     "mocha": "^7.2.0",
