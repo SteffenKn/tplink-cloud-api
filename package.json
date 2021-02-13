@@ -42,7 +42,6 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "cors-anywhere": "^0.4.3",
     "cross-fetch": "^3.0.6",
     "uuid": "^3.4.0"
   },
