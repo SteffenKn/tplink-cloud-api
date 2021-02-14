@@ -28,8 +28,8 @@ export default class HS300 extends hs100 {
   children: any[];
   tpLink: TPLink;
 
-  constructor(tpLink:TPLink, deviceInfo) {
-    super(tpLink, deviceInfo);
+  constructor(tpLink:TPLink, deviceInfo, baseUrl) {
+    super(tpLink, deviceInfo, baseUrl);
     this.tpLink = tpLink;
     this.genericType = "switch";
   }
@@ -56,6 +56,6 @@ export default class HS300 extends hs100 {
   }
 
   getChild(alias) {
-    return new HS300child(this.tpLink, this.device, this.findChild(alias));
+    return new HS300child(this.tpLink, this.device, this.findChild(alias), this.baseUrl);
   }
 }

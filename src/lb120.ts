@@ -24,8 +24,8 @@ import lb100 from "./lb100";
 
 // Should work for LB120, KL120
 export default class LB120 extends lb100 {
-  constructor(tpLink, deviceInfo) {
-    super(tpLink, deviceInfo);
+  constructor(tpLink, deviceInfo, baseUrl) {
+    super(tpLink, deviceInfo, baseUrl);
   }
 
   async setState(

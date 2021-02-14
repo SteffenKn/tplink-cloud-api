@@ -24,8 +24,8 @@ import device from "./device";
 
 // Should work for LB100, LB110, KB100, KL100, KL50, KL60
 export default class LB100 extends device {
-  constructor(tpLink, deviceInfo) {
-    super(tpLink, deviceInfo);
+  constructor(tpLink, deviceInfo, baseUrl) {
+    super(tpLink, deviceInfo, baseUrl);
     this.genericType = "bulb";
   }
 

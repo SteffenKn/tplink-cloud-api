@@ -41,9 +41,10 @@ export interface TPLinkDeviceInfo {
 export default class TPLinkDevice {
   genericType: string;
   device: TPLinkDeviceInfo;
+  baseUrl: string;
   private params: any;
 
-  constructor(tpLink: tplink, deviceInfo: TPLinkDeviceInfo) {
+  constructor(tpLink: tplink, deviceInfo: TPLinkDeviceInfo, baseUrl: string = 'https://wap.tplinkcloud.com') {
     if (!tpLink) {
       throw new Error("missing required parameter tpLink");
     } else if (!deviceInfo) {
@@ -52,6 +53,7 @@ export default class TPLinkDevice {
       throw new Error("invalid type passed for deviceInfo, expected object.");
     }
 
+    this.baseUrl = baseUrl;
     this.device = deviceInfo;
     this.params = {
       appName: "Kasa_Android",
@@ -119,7 +121,7 @@ export default class TPLinkDevice {
     return this.passthroughRequest(command);
   }
   async passthroughRequest(command) {
-    const url = `https://kasa-devices.shisha-control.com/?${this.encodeQueryData(this.params)}`
+    const url = `${this.baseUrl}/?${this.encodeQueryData(this.params)}`
 
     const response = await fetch(url, {
       method: 'POST',

@@ -23,8 +23,8 @@ tplink-cloud-api. If not, see http://www.gnu.org/licenses/. */
 import device from "./device";
 
 export default class HS100 extends device {
-  constructor(tpLink, deviceInfo) {
-    super(tpLink, deviceInfo);
+  constructor(tpLink, deviceInfo, baseUrl) {
+    super(tpLink, deviceInfo, baseUrl);
     this.genericType = "plug";
   }
 

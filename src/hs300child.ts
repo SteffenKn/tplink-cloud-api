@@ -25,8 +25,8 @@ import device from "./device";
 export default class HS300child extends device {
   private child;
 
-  constructor(tpLink, deviceInfo, child) {
-    super(tpLink, deviceInfo);
+  constructor(tpLink, deviceInfo, child, baseUrl) {
+    super(tpLink, deviceInfo, baseUrl);
     this.genericType = "plug";
     this.child = child;
   }

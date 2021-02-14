@@ -53,7 +53,8 @@ interface LoginResponse {
 export async function login(
   user: string,
   passwd: string,
-  termid: string = v4()
+  termid: string = v4(),
+  baseUrl: string = 'https://wap.tplinkcloud.com',
 ): Promise<TPLink> {
   if (!user) {
     throw new Error("missing required user parameter");
@@ -61,7 +62,7 @@ export async function login(
     throw new Error("missing required password parameter");
   }
 
-  const url = `https://kasa-devices.shisha-control.com/?${encodeQueryData({
+  const url = `${baseUrl}/?${encodeQueryData({
     appName: "Kasa_Android",
     termID: termid,
     appVer: "1.4.4.607",
@@ -95,16 +96,18 @@ export async function login(
 
   const token = responseData.result.token;
 
-  return new TPLink(token, termid);
+  return new TPLink(token, termid, baseUrl);
 }
 
 export default class TPLink {
   token: string;
   termid: string;
+  baseUrl: string;
   deviceList: any[];
-  constructor(token: string, termid: string = v4()) {
+  constructor(token: string, termid: string = v4(), baseUrl = 'https://wap.tplinkcloud.com') {
     this.token = token;
     this.termid = termid;
+    this.baseUrl = baseUrl
   }
 
   getTermId(): string {
@@ -115,7 +118,7 @@ export default class TPLink {
   }
 
   async getDeviceList(): Promise<any[]> {
-    const url = `https://kasa-devices.shisha-control.com/?${encodeQueryData({
+    const url = `${this.baseUrl}/?${encodeQueryData({
       appName: "Kasa_Android",
       termID: this.termid,
       appVer: "1.4.4.607",
@@ -164,23 +167,23 @@ export default class TPLink {
     const model = deviceInfo.deviceModel;
     if (type.includes("bulb")) {
       if (model && model.includes("130")) {
-        return new lb130(this, deviceInfo);
+        return new lb130(this, deviceInfo, this.baseUrl);
       }
       if (model && model.includes("120")) {
-        return new lb120(this, deviceInfo);
+        return new lb120(this, deviceInfo, this.baseUrl);
       }
-      return new lb100(this, deviceInfo);
+      return new lb100(this, deviceInfo, this.baseUrl);
     }
     if (type.includes("plug")) {
       if (model && model.includes("110")) {
-        return new hs110(this, deviceInfo);
+        return new hs110(this, deviceInfo, this.baseUrl);
       }
-      return new hs100(this, deviceInfo);
+      return new hs100(this, deviceInfo, this.baseUrl);
     }
 
     if (type.includes("switch")) {
       if (model && model.includes("200")) {
-        return new hs200(this, deviceInfo);
+        return new hs200(this, deviceInfo, this.baseUrl);
       }
     }
     return new device(this, deviceInfo);
@@ -204,27 +207,27 @@ export default class TPLink {
 
   // for an HS100 smartplug
   getHS100(alias) {
-    return new hs100(this, this.findDevice(alias));
+    return new hs100(this, this.findDevice(alias), this.baseUrl);
   }
 
   // for an HS110 smartplug
   getHS110(alias) {
-    return new hs110(this, this.findDevice(alias));
+    return new hs110(this, this.findDevice(alias), this.baseUrl);
   }
 
   // for an HS200 smart switch
   getHS200(alias) {
-    return new hs200(this, this.findDevice(alias));
+    return new hs200(this, this.findDevice(alias), this.baseUrl);
   }
 
   // for an HS300 smart multi-switch
   getHS300(alias) {
-    return new hs300(this, this.findDevice(alias));
+    return new hs300(this, this.findDevice(alias), this.baseUrl);
   }
 
   // for an LB100, LB110, KL110, KL50, KL60 lightbulb (dimmable)
   getLB100(alias): lb100 {
-    return new lb100(this, this.findDevice(alias));
+    return new lb100(this, this.findDevice(alias), this.baseUrl);
   }
   getLB110(alias) {
     return this.getLB100(alias);
@@ -241,7 +244,7 @@ export default class TPLink {
 
   // for an LB120, KL120 lightbulb (dimmable, tunable white)
   getLB120(alias): lb120 {
-    return new lb120(this, this.findDevice(alias));
+    return new lb120(this, this.findDevice(alias), this.baseUrl);
   }
   getKL120(alias) {
     return this.getLB120(alias);
@@ -249,7 +252,7 @@ export default class TPLink {
 
   // for an LB130, KB130, KL130 lightbulb (dimmable, tunable white, color changing)
   getLB130(alias) {
-    return new lb130(this, this.findDevice(alias));
+    return new lb130(this, this.findDevice(alias), this.baseUrl);
   }
   getKB130(alias) {
     return this.getLB130(alias);
